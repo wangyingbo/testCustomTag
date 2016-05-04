@@ -91,7 +91,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
 
 #define SelectedButtonTag    1000
 #define NotSelectedButtonTag 2000
-
+#define isOrNotRepeatAdd 0  //是否支持同一个标签重复点击添加,0表示不能重复添加，1表示可以重复添加
 
 @interface TagView()
 {
@@ -244,6 +244,11 @@ typedef NS_ENUM(BOOL,TagButtontype){
             NSInteger index = [string integerValue];
             if (i == index) {
                 button.backgroundColor = [UIColor greenColor];
+                
+                //是否支持同一个标签重复点击添加
+                if (isOrNotRepeatAdd == 0) {
+                    button.enabled = NO;
+                }
             }
         }
         
@@ -262,16 +267,6 @@ typedef NS_ENUM(BOOL,TagButtontype){
     [self.selectedButtonBackArr removeObjectAtIndex:index];
     [self setNeedsDisplay];
     
-
-//    if ()
-//    {
-//        NSDictionary *dict =[[NSDictionary alloc] initWithObjectsAndKeys:self.haveSelected,@"haveSelected",nil];
-//        //创建通知 第一步
-//        NSNotification *notification =[NSNotification notificationWithName:@"haveSelected" object:self userInfo:dict];
-//        //通过通知中心发送通知 第二步
-//        [[NSNotificationCenter defaultCenter] postNotification:notification];
-//    }
-    
 }
 
 
@@ -285,7 +280,8 @@ typedef NS_ENUM(BOOL,TagButtontype){
     [self setNeedsDisplay];
     
 
-    NSLog(@"_haveSelectedMaxX:%f",_haveSelectedMaxX);
+    //NSLog(@"_haveSelectedMaxX:%f",_haveSelectedMaxX);
+    //换行的时候发送通知
     if (_haveSelectedMaxX + TagButtonSpaceX + button.buttonW > (self.frame.size.width - RightToView))
     {
         NSDictionary *dict =[[NSDictionary alloc] initWithObjectsAndKeys:self.haveSelected,@"notSelected",self.selectedButtonBackArr,@"selectedButtonBackArr",nil];
