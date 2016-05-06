@@ -44,6 +44,7 @@
     _tagViewFrame = CGRectMake(0, 0, FULL_SCREEN_WIDTH, _cellH);
     
     self.notSelectedArr =@[@"6手续的风格",@"7saSh",@"8SDFSDFS3",@"9撒旦是是",@"0水电费的所发生的",@"结果是",@"这是士大夫的法",@"真是",@"是个问题爸爸",@"扯淡啊",@"好滴吧没啥大问题",@"哎呦呦，别介啊",@"傻干的蛋蛋",@"扯犊子呢",@"也是",@"对",@"队长别开枪是我",@"好滴吧",@"扯犊子玩意儿",@"嘿嘿嘿",@"好滴"];
+    self.havedSelectedArr = @[@"卧槽",@"要坏事儿了"];
     
     //第三步:响应通知。 haveSelected通知方法
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(haveSelectedMethod:) name:@"haveSelected" object:nil];
