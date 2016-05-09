@@ -171,8 +171,13 @@ typedef NS_ENUM(BOOL,TagButtontype){
         [button addTarget:self action:@selector(selectedButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         button.tag = SelectedButtonTag+i;
         
-        if (i > self.haveSelected.count-self.selectedButtonBackArr.count-1) {
+        
+        //NSLog(@"haveSelected.count:%lu",(unsigned long)self.haveSelected.count);
+        //NSLog(@"selectedButtonBackArr.count:%lu",(unsigned long)self.selectedButtonBackArr.count);
+        NSInteger integer = self.haveSelected.count-self.selectedButtonBackArr.count-1;
+        if (i > integer) {
             button.isOrNotExtraAddButton = YES;
+            button.tagInt = i - (self.haveSelected.count-self.selectedButtonBackArr.count);
         }
         
         if (CGRectGetMaxX(button.frame) + TagButtonSpaceX > (rect.size.width - RightToView)) {
@@ -216,7 +221,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
         [self addSubview:button];
     }
     
-    
+
     
     beginX = LeftToView;
     beginY += self.tagViewButtonHeight + TagButtonSpaceBetweenSeletedAndNotSeleted;
@@ -271,7 +276,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
     _isNotFirstReload = YES;
     
     if (button.isOrNotExtraAddButton) {
-        NSInteger test = index - self.haveSelected.count;
+        NSInteger test = button.tagInt;
         NSLog(@"*******selected******%@",[NSString stringWithFormat:@"%ld",(long)test]);
         [self.selectedButtonBackArr removeObjectAtIndex:test];
     }
@@ -288,7 +293,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
     [self.selectedButtonBackArr addObject:[NSString stringWithFormat:@"%ld",(long)index]];
 
     
-    NSLog(@"*******notSelected******%@",[NSString stringWithFormat:@"%ld",(long)index]);
+    NSLog(@"----notSelected----%@",[NSString stringWithFormat:@"%ld",(long)index]);
     //[self.notSelected removeObjectAtIndex:index];
     [self setNeedsDisplay];
     
