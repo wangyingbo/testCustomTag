@@ -7,6 +7,8 @@
 //
 
 #import "secondVC.h"
+//警告
+#define   SHOW_ALTER(str)  [[[UIAlertView alloc]initWithTitle:@"可儿购提示" message:str delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil] show]
 
 extern NSString *notSelected;
 extern NSString *selected;
@@ -28,20 +30,25 @@ extern NSString *handAdd;
     
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    [self.textField becomeFirstResponder];
+}
 
 /**
  *  添加控件
  */
 - (void)setUI
 {
-    UITextField *textField = [[UITextField alloc]initWithFrame:CGRectMake(100, 200, 200, 40)];
+    UITextField *textField = [[UITextField alloc]initWithFrame:CGRectMake(30, 150, 200, 40)];
     textField.placeholder = @"输入标签名字";
     textField.borderStyle = UITextBorderStyleRoundedRect;
     [self.view addSubview:textField];
     self.textField = textField;
     
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(100, 280, 50, 40 )];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(250, 150, 50, 40)];
     [button setTitle:@"确定" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
@@ -72,13 +79,19 @@ extern NSString *handAdd;
     
     if (self.textField.text.length > 0)
     {
-        NSMutableDictionary *mutDic = [NSMutableDictionary dictionary];
-        [mutDic setObject:handAdd forKey:self.textField.text];
-        [self.dataMutArr addObject:mutDic];
-        self.block(self.dataMutArr);
+        if (self.textField.text.length < 18)
+        {
+            NSMutableDictionary *mutDic = [NSMutableDictionary dictionary];
+            [mutDic setObject:handAdd forKey:self.textField.text];
+            [self.dataMutArr addObject:mutDic];
+            self.block(self.dataMutArr);
+            
+            [self.navigationController popViewControllerAnimated:YES];
+        }else
+        {
+            SHOW_ALTER(@"输入字数太多");
+        }
     }
-    
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
