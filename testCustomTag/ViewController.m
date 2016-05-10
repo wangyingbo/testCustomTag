@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "TagView.h"
+#import "YBCustomTagView.h"
+#import "secondVC.h"
 
 
 //屏幕的宽和高
@@ -32,7 +33,8 @@
 @property (nonatomic, strong) NSArray *havedSelectedArr;
 @property (nonatomic, strong) NSArray *selectedButtonBackArr;
 @property (nonatomic, strong) NSArray *notSelectedArr;
-@property (nonatomic, strong) TagView *tagView;
+@property (nonatomic, strong) NSArray *handAddTagIndexArr;
+@property (nonatomic, strong) YBCustomTagView *tagView;
 @end
 
 @implementation ViewController
@@ -44,7 +46,7 @@
     _tagViewFrame = CGRectMake(0, 0, FULL_SCREEN_WIDTH, _cellH);
     
     self.notSelectedArr =@[@"6手续的风格",@"7saSh",@"8SDFSDFS3",@"9撒旦是是",@"0水电费的所发生的",@"结果是",@"这是士大夫的法",@"真是",@"是个问题爸爸",@"扯淡啊",@"好滴吧没啥大问题",@"哎呦呦，别介啊",@"傻干的蛋蛋",@"扯犊子呢",@"也是",@"对",@"队长别开枪是我",@"好滴吧",@"扯犊子玩意儿",@"嘿嘿嘿",@"好滴"];
-    self.havedSelectedArr = @[@"卧槽",@"要坏事儿了"];
+    //self.havedSelectedArr = @[@"卧槽",@"要坏事儿了"];
     
     //第三步:响应通知。 haveSelected通知方法
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(haveSelectedMethod:) name:@"haveSelected" object:nil];
@@ -54,12 +56,15 @@
     
     //设置collectionView
     [self initCollectionView];
+    
+    //添加右边的按钮
+    [self addNextButton];
 }
 
 
 - (void)haveSelectedMethod:(NSNotification *)text
 {
-    NSLog(@"haveSelected通知方法--删除一行");
+    //NSLog(@"haveSelected通知方法--删除一行");
     self.havedSelectedArr = text.userInfo[@"haveSelected"];
     self.selectedButtonBackArr = text.userInfo[@"haveSelectedSelectedButtonBackArr"];
     
@@ -68,7 +73,7 @@
     rect.size.height = rect.size.height+perTagButtonH;
     _tagViewFrame = rect;
     
-    NSLog(@"..........%f",_cellH);
+    //NSLog(@"..........%f",_cellH);
     [self.collectionView reloadData];
 }
 
@@ -76,7 +81,7 @@
 
 - (void)notSelectedMethod:(NSNotification *)text
 {
-    NSLog(@"notSelected通知方法--增加一行");
+    //NSLog(@"notSelected通知方法--增加一行");
     self.havedSelectedArr = text.userInfo[@"notSelected"];
     self.selectedButtonBackArr = text.userInfo[@"selectedButtonBackArr"];
     
@@ -85,7 +90,7 @@
     rect.size.height = rect.size.height+perTagButtonH;
     _tagViewFrame = rect;
     
-    NSLog(@"..........%f",_cellH);
+    //NSLog(@"..........%f",_cellH);
     [self.collectionView reloadData];
 }
 
@@ -96,6 +101,33 @@
     [[NSNotificationCenter defaultCenter] removeObserver:@"notSelected"];
 }
 
+/**
+ *  添加右上角继续按钮
+ */
+- (void)addNextButton
+{
+    UIButton *buildButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [buildButton setTitle:@"下个" forState:UIControlStateNormal];
+    buildButton.frame = CGRectMake(0,0, 40, 30);
+    [buildButton setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
+    [buildButton addTarget:self action:@selector(nextClick:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buildButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buildButton];
+    self.navigationItem.rightBarButtonItem = buildButtonItem;
+}
+- (void)nextClick:(UIButton *)sender
+{
+    secondVC *vc = [[secondVC alloc]init];
+    [vc.dataMutArr addObjectsFromArray:self.havedSelectedArr];
+    [vc.handAddTagIndexArr addObjectsFromArray:self.handAddTagIndexArr];
+    vc.block = ^(NSArray *arrayData,NSArray *arrayHandAdd){
+        //在secondVC里手动添加标签的block回调
+        self.havedSelectedArr = arrayData;
+        self.handAddTagIndexArr = arrayHandAdd;
+        
+        [self.collectionView reloadData];
+    };
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
 /**
  *  设置collectionView
@@ -136,13 +168,22 @@
     UICollectionViewCell *firstCell = [collectionView dequeueReusableCellWithReuseIdentifier:cellID forIndexPath:indexPath];
     
     
-    TagView *view = [[TagView alloc] initWithFrame:_tagViewFrame];
+    YBCustomTagView *view = [[YBCustomTagView alloc] initWithFrame:_tagViewFrame];
     view.backgroundColor = [UIColor whiteColor];
     view.tagViewButtonFont = 15;
     view.tagViewButtonHeight = tagViewButtonH;
     view.haveSelected = [NSMutableArray arrayWithArray:_havedSelectedArr];
     view.notSelected = [NSMutableArray arrayWithArray:self.notSelectedArr];
     view.selectedButtonBackArr = [NSMutableArray arrayWithArray:self.self.selectedButtonBackArr];
+    view.handAddTagIndexArr = self.handAddTagIndexArr;
+    view.block = ^(NSArray *haveSelected,NSArray *selectedBackArr,NSArray *handAddArr){
+        self.havedSelectedArr = haveSelected;
+        self.handAddTagIndexArr = handAddArr;
+        self.selectedButtonBackArr = selectedBackArr;
+        //YBCustomTagView里的block回调
+        //NSLog(@"%@",self.havedSelectedArr);
+    };
+    
     [firstCell addSubview:view];
     self.tagView = view;
     

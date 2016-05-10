@@ -6,9 +6,7 @@
 //  Copyright © 2016年 王迎博. All rights reserved.
 //
 
-#import "TagView.h"
-
-
+#import "YBCustomTagView.h"
 
 typedef NS_ENUM(BOOL,TagButtontype){
     Selected,
@@ -17,6 +15,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
 
 @interface TagButton : UIButton
 {
+    
 }
 @property (nonatomic, assign) TagButtontype tagButtonType;
 @property (nonatomic, assign) CGFloat buttonW;
@@ -94,7 +93,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
 #define NotSelectedButtonTag 2000
 #define isOrNotRepeatAdd 0  //是否支持同一个标签重复点击添加,0表示不能重复添加，1表示可以重复添加
 
-@interface TagView()
+@interface YBCustomTagView()
 {
     CGFloat _notSelectedMaxX;
     CGFloat _haveSelectedMaxX;
@@ -107,7 +106,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
 
 @end
 
-@implementation TagView
+@implementation YBCustomTagView
 
 @synthesize haveSelected = _haveSelected;
 
@@ -165,6 +164,8 @@ typedef NS_ENUM(BOOL,TagButtontype){
     
     NSInteger beginX = LeftToView;
     NSInteger beginY = TopToView;
+    
+    NSInteger buttonTagInt = 0;
     for (int i = 0; i< self.haveSelected.count; i++)
     {  //已经选择的标签
         TagButton *button = [[TagButton alloc] initWithTitle:self.haveSelected[i] font:[UIFont systemFontOfSize:self.tagViewButtonFont] tagButtonType:Selected frame:CGRectMake(beginX, beginY, 0, self.tagViewButtonHeight)];
@@ -174,11 +175,28 @@ typedef NS_ENUM(BOOL,TagButtontype){
         
         //NSLog(@"haveSelected.count:%lu",(unsigned long)self.haveSelected.count);
         //NSLog(@"selectedButtonBackArr.count:%lu",(unsigned long)self.selectedButtonBackArr.count);
-        NSInteger integer = self.haveSelected.count-self.selectedButtonBackArr.count-1;
-        if (i > integer) {
-            button.isOrNotExtraAddButton = YES;
-            button.tagInt = i - (self.haveSelected.count-self.selectedButtonBackArr.count);
-        }
+        
+        //NSInteger integer = self.haveSelected.count-self.selectedButtonBackArr.count-1;
+        //if (i > integer)
+            if (self.handAddTagIndexArr)
+            {
+                NSLog(@"...........%@",self.handAddTagIndexArr);
+                for (NSString *string in self.handAddTagIndexArr)
+                {
+                    NSInteger handAddIndex = [string integerValue];
+                    if (i != handAddIndex) {
+                        button.isOrNotExtraAddButton = YES;
+                        button.tagInt = buttonTagInt;
+                    }
+                }
+            }else
+            {
+                button.isOrNotExtraAddButton = YES;
+                button.tagInt = buttonTagInt;
+            }
+            buttonTagInt ++;
+        
+        
         
         if (CGRectGetMaxX(button.frame) + TagButtonSpaceX > (rect.size.width - RightToView)) {
             beginX = LeftToView;
@@ -219,6 +237,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
         }
         
         [self addSubview:button];
+
     }
     
 
@@ -265,6 +284,10 @@ typedef NS_ENUM(BOOL,TagButtontype){
         
         [self addSubview:button];
     }
+    
+    
+    //block传值
+    self.block(self.haveSelected,self.selectedButtonBackArr,self.handAddTagIndexArr);
 }
 
 
@@ -275,7 +298,15 @@ typedef NS_ENUM(BOOL,TagButtontype){
     [self.haveSelected removeObjectAtIndex:index];
     _isNotFirstReload = YES;
     
-    if (button.isOrNotExtraAddButton) {
+    
+//    if (self.handAddTagIndexArr)
+//    {
+//        self.handAddTagIndexArr = [self resetHandAddTagIndexeArrBySelectedTag:index];
+//    }
+    
+    
+    if (button.isOrNotExtraAddButton)
+    {
         NSInteger test = button.tagInt;
         NSLog(@"*******selected******%@",[NSString stringWithFormat:@"%ld",(long)test]);
         [self.selectedButtonBackArr removeObjectAtIndex:test];
@@ -284,7 +315,6 @@ typedef NS_ENUM(BOOL,TagButtontype){
     [self setNeedsDisplay];
     
 }
-
 
 
 - (void)notSelectedButtonClicked:(TagButton *)button{
@@ -312,6 +342,56 @@ typedef NS_ENUM(BOOL,TagButtontype){
 }
 
 
+
+
+
+
+- (NSArray *)resetHandAddTagIndexeArrBySelectedTag:(NSInteger)buttonTag
+{
+    NSMutableArray *mutArr = [NSMutableArray array];
+    
+    for (int i = 0; i < self.handAddTagIndexArr.count; i ++)
+    {
+        NSString *string = [self.handAddTagIndexArr objectAtIndex:i];
+        
+        if (buttonTag < [string integerValue])
+        {
+            if (i!=0)
+            {
+                NSRange range = NSMakeRange(0, i-1);
+                NSArray *arr = [self.handAddTagIndexArr subarrayWithRange:range];
+                [mutArr addObjectsFromArray:arr];
+            }
+            for (int j = i; j<self.handAddTagIndexArr.count; j++)
+            {
+                NSString *indexStr = [self.handAddTagIndexArr objectAtIndex:j];
+                NSInteger intNew = [indexStr integerValue]- 1;
+                NSString *strNew = [NSString stringWithFormat:@"%ld",(long)intNew];
+                [mutArr addObject:strNew];
+                 NSLog(@"...mutArr...%@",mutArr);
+            }
+        }
+        
+        if (buttonTag == [string integerValue])
+        {
+            if (i!=0)
+            {
+                NSRange range = NSMakeRange(0, i-1);
+                NSArray *arr = [self.handAddTagIndexArr subarrayWithRange:range];
+                [mutArr addObjectsFromArray:arr];
+            }
+            for (int j = i+1; j<self.handAddTagIndexArr.count; j++)
+            {
+                NSString *indexStr = [self.handAddTagIndexArr objectAtIndex:j];
+                NSInteger intNew = [indexStr integerValue]- 1;
+                NSString *strNew = [NSString stringWithFormat:@"%ld",(long)intNew];
+                [mutArr addObject:strNew];
+            }
+        }
+    }
+    
+    return mutArr;
+}
 
 
 @end

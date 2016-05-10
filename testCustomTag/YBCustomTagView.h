@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TagView : UIView
+typedef void(^customTagBlock)(NSArray *haveSelected,NSArray *selectedBackArr,NSArray *handAddArr);
+
+@interface YBCustomTagView : UIView
 /**
  *  tag的高度
  */
@@ -29,5 +31,13 @@
  *  选中的button的背景色
  */
 @property (nonatomic, strong) NSMutableArray *selectedButtonBackArr;
+/**
+ *  block
+ */
+@property (nonatomic, copy) customTagBlock block;
+/**
+ *  手动添加的tag的位置
+ */
+@property (nonatomic, strong) NSArray *handAddTagIndexArr;
 
 @end

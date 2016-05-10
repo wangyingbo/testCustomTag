@@ -15,7 +15,8 @@
 		688B3DB91CD21301008B4204 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 688B3DB71CD21301008B4204 /* LaunchScreen.storyboard */; };
 		688B3DC41CD21301008B4204 /* testCustomTagTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 688B3DC31CD21301008B4204 /* testCustomTagTests.m */; };
 		688B3DCF1CD21301008B4204 /* testCustomTagUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 688B3DCE1CD21301008B4204 /* testCustomTagUITests.m */; };
-		688B3DDE1CD21531008B4204 /* TagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 688B3DDC1CD21531008B4204 /* TagView.m */; };
+		688B3DDE1CD21531008B4204 /* YBCustomTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 688B3DDC1CD21531008B4204 /* YBCustomTagView.m */; };
+		68F9CFD81CE0601400FA5D39 /* secondVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F9CFD71CE0601400FA5D39 /* secondVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,8 +53,10 @@
 		688B3DCA1CD21301008B4204 /* testCustomTagUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = testCustomTagUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		688B3DCE1CD21301008B4204 /* testCustomTagUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = testCustomTagUITests.m; sourceTree = "<group>"; };
 		688B3DD01CD21301008B4204 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		688B3DDC1CD21531008B4204 /* TagView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagView.m; sourceTree = "<group>"; };
-		688B3DDD1CD21531008B4204 /* TagView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagView.h; sourceTree = "<group>"; };
+		688B3DDC1CD21531008B4204 /* YBCustomTagView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YBCustomTagView.m; sourceTree = "<group>"; };
+		688B3DDD1CD21531008B4204 /* YBCustomTagView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YBCustomTagView.h; sourceTree = "<group>"; };
+		68F9CFD61CE0601400FA5D39 /* secondVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secondVC.h; sourceTree = "<group>"; };
+		68F9CFD71CE0601400FA5D39 /* secondVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = secondVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,8 +111,10 @@
 				688B3DAD1CD21301008B4204 /* AppDelegate.m */,
 				688B3DAF1CD21301008B4204 /* ViewController.h */,
 				688B3DB01CD21301008B4204 /* ViewController.m */,
-				688B3DDD1CD21531008B4204 /* TagView.h */,
-				688B3DDC1CD21531008B4204 /* TagView.m */,
+				68F9CFD61CE0601400FA5D39 /* secondVC.h */,
+				68F9CFD71CE0601400FA5D39 /* secondVC.m */,
+				688B3DDD1CD21531008B4204 /* YBCustomTagView.h */,
+				688B3DDC1CD21531008B4204 /* YBCustomTagView.m */,
 				688B3DB21CD21301008B4204 /* Main.storyboard */,
 				688B3DA91CD21301008B4204 /* Supporting Files */,
 			);
@@ -278,7 +283,8 @@
 				688B3DB11CD21301008B4204 /* ViewController.m in Sources */,
 				688B3DAE1CD21301008B4204 /* AppDelegate.m in Sources */,
 				688B3DAB1CD21301008B4204 /* main.m in Sources */,
-				688B3DDE1CD21531008B4204 /* TagView.m in Sources */,
+				688B3DDE1CD21531008B4204 /* YBCustomTagView.m in Sources */,
+				68F9CFD81CE0601400FA5D39 /* secondVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
