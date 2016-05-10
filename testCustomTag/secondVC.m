@@ -8,6 +8,10 @@
 
 #import "secondVC.h"
 
+extern NSString *notSelected;
+extern NSString *selected;
+extern NSString *handAdd;
+
 @interface secondVC ()
 @property (nonatomic, strong) UITextField *textField;
 @end
@@ -42,7 +46,7 @@
     [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
-
+    
 }
 
 
@@ -57,13 +61,7 @@
     return _dataMutArr;
 }
 
-- (NSMutableArray *)handAddTagIndexArr
-{
-    if (!_handAddTagIndexArr) {
-        _handAddTagIndexArr = [NSMutableArray array];
-    }
-    return _handAddTagIndexArr;
-}
+
 
 /**
  *  返回上级页面
@@ -74,14 +72,10 @@
     
     if (self.textField.text.length > 0)
     {
-        [self.dataMutArr addObject:self.textField.text];
-        NSInteger indexOfLastAddTagInDataMutArr = 0;
-        if (self.dataMutArr.count > 0) {
-            indexOfLastAddTagInDataMutArr = self.dataMutArr.count - 1;
-        }
-        NSString *indexStr = [NSString stringWithFormat:@"%ld",(long)indexOfLastAddTagInDataMutArr];
-        [self.handAddTagIndexArr addObject:indexStr];
-        self.block(self.dataMutArr,self.handAddTagIndexArr);
+        NSMutableDictionary *mutDic = [NSMutableDictionary dictionary];
+        [mutDic setObject:handAdd forKey:self.textField.text];
+        [self.dataMutArr addObject:mutDic];
+        self.block(self.dataMutArr);
     }
     
     [self.navigationController popViewControllerAnimated:YES];

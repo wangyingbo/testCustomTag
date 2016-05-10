@@ -18,10 +18,22 @@
 #define YBColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
 
 
+
+
+
+
 #define cellID @"cellID"
 #define tagViewButtonH 30
 #define TagButtonSpaY 10 //两个tag之间竖直方向间距
 #define perTagButtonH (tagViewButtonH + TagButtonSpaY) //增加一行增加的高度
+
+#define NOTSELECTED @"notSelected"
+#define SELECTED @"selected"
+#define HANDADD @"handAdd"
+
+const NSString *notSelected = NOTSELECTED;
+const NSString *selected = SELECTED;
+const NSString *handAdd = HANDADD;
 
 @interface ViewController ()<UICollectionViewDelegateFlowLayout,UICollectionViewDelegate,UICollectionViewDataSource>
 {
@@ -33,7 +45,6 @@
 @property (nonatomic, strong) NSArray *havedSelectedArr;
 @property (nonatomic, strong) NSArray *selectedButtonBackArr;
 @property (nonatomic, strong) NSArray *notSelectedArr;
-@property (nonatomic, strong) NSArray *handAddTagIndexArr;
 @property (nonatomic, strong) YBCustomTagView *tagView;
 @end
 
@@ -44,9 +55,6 @@
     
     _cellH = FULL_SCREEN_HEIGHT;
     _tagViewFrame = CGRectMake(0, 0, FULL_SCREEN_WIDTH, _cellH);
-    
-    self.notSelectedArr =@[@"6手续的风格",@"7saSh",@"8SDFSDFS3",@"9撒旦是是",@"0水电费的所发生的",@"结果是",@"这是士大夫的法",@"真是",@"是个问题爸爸",@"扯淡啊",@"好滴吧没啥大问题",@"哎呦呦，别介啊",@"傻干的蛋蛋",@"扯犊子呢",@"也是",@"对",@"队长别开枪是我",@"好滴吧",@"扯犊子玩意儿",@"嘿嘿嘿",@"好滴"];
-    //self.havedSelectedArr = @[@"卧槽",@"要坏事儿了"];
     
     //第三步:响应通知。 haveSelected通知方法
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(haveSelectedMethod:) name:@"haveSelected" object:nil];
@@ -59,6 +67,30 @@
     
     //添加右边的按钮
     [self addNextButton];
+    
+    //添加数据
+    [self setData];
+    
+}
+
+
+/**
+ *  添加数据
+ */
+- (void)setData
+{
+    //self.notSelectedArr =@[@"6手续的风格",@"7saSh",@"8SDFSDFS3",@"9撒旦是是",@"0水电费的所发生的",@"结果是",@"这是士大夫的法",@"真是",@"是个问题爸爸",@"扯淡啊",@"好滴吧没啥大问题",@"哎呦呦，别介啊",@"傻干的蛋蛋",@"扯犊子呢",@"也是",@"对",@"队长别开枪是我",@"好滴吧",@"扯犊子玩意儿",@"嘿嘿嘿",@"好滴"];
+    //self.havedSelectedArr = @[@"卧槽",@"要坏事儿了"];
+    
+    NSArray *arrayNotSelected =@[@"6手续的风格",@"7saSh",@"8SDFSDFS3",@"9撒旦是是",@"0水电费的所发生的",@"结果是",@"这是士大夫的法",@"真是",@"是个问题爸爸",@"扯淡啊",@"好滴吧没啥大问题",@"哎呦呦，别介啊",@"傻干的蛋蛋",@"扯犊子呢",@"也是",@"对",@"队长别开枪是我",@"好滴吧",@"扯犊子玩意儿",@"嘿嘿嘿",@"好滴"];
+    NSMutableArray *mutArrNotSelected = [NSMutableArray array];
+    for (NSString *strNotSelected in arrayNotSelected)
+    {
+        NSMutableDictionary *dicNotSelected = [NSMutableDictionary dictionary];
+        [dicNotSelected setObject:notSelected forKey:strNotSelected];
+        [mutArrNotSelected addObject:dicNotSelected];
+    }
+    self.notSelectedArr = mutArrNotSelected;
 }
 
 
@@ -118,12 +150,10 @@
 {
     secondVC *vc = [[secondVC alloc]init];
     [vc.dataMutArr addObjectsFromArray:self.havedSelectedArr];
-    [vc.handAddTagIndexArr addObjectsFromArray:self.handAddTagIndexArr];
-    vc.block = ^(NSArray *arrayData,NSArray *arrayHandAdd){
+    vc.block = ^(NSArray *arrayData){
+        
         //在secondVC里手动添加标签的block回调
         self.havedSelectedArr = arrayData;
-        self.handAddTagIndexArr = arrayHandAdd;
-        
         [self.collectionView reloadData];
     };
     [self.navigationController pushViewController:vc animated:YES];
@@ -175,13 +205,9 @@
     view.haveSelected = [NSMutableArray arrayWithArray:_havedSelectedArr];
     view.notSelected = [NSMutableArray arrayWithArray:self.notSelectedArr];
     view.selectedButtonBackArr = [NSMutableArray arrayWithArray:self.self.selectedButtonBackArr];
-    view.handAddTagIndexArr = self.handAddTagIndexArr;
-    view.block = ^(NSArray *haveSelected,NSArray *selectedBackArr,NSArray *handAddArr){
+    view.block = ^(NSArray *haveSelected,NSArray *selectedBackArr){
         self.havedSelectedArr = haveSelected;
-        self.handAddTagIndexArr = handAddArr;
         self.selectedButtonBackArr = selectedBackArr;
-        //YBCustomTagView里的block回调
-        //NSLog(@"%@",self.havedSelectedArr);
     };
     
     [firstCell addSubview:view];

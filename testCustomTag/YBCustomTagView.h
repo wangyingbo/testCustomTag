@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^customTagBlock)(NSArray *haveSelected,NSArray *selectedBackArr,NSArray *handAddArr);
+typedef void(^customTagBlock)(NSArray *haveSelected,NSArray *selectedBackArr);
 
 @interface YBCustomTagView : UIView
 /**
@@ -35,9 +35,6 @@ typedef void(^customTagBlock)(NSArray *haveSelected,NSArray *selectedBackArr,NSA
  *  block
  */
 @property (nonatomic, copy) customTagBlock block;
-/**
- *  手动添加的tag的位置
- */
-@property (nonatomic, strong) NSArray *handAddTagIndexArr;
+
 
 @end

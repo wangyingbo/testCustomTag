@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^secondVCBlock)(NSArray *arrayData,NSArray *arrayHandAdd);
+typedef void(^secondVCBlock)(NSArray *arrayData);
 
 @interface secondVC : UIViewController
 
 @property (nonatomic, strong) NSMutableArray *dataMutArr;
-@property (nonatomic, strong) NSMutableArray *handAddTagIndexArr;
+
 @property (nonatomic, copy) secondVCBlock block;
 
 @end

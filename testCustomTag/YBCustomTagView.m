@@ -93,11 +93,16 @@ typedef NS_ENUM(BOOL,TagButtontype){
 #define NotSelectedButtonTag 2000
 #define isOrNotRepeatAdd 0  //是否支持同一个标签重复点击添加,0表示不能重复添加，1表示可以重复添加
 
+extern NSString *notSelected;
+extern NSString *selected;
+extern NSString *handAdd;
+
 @interface YBCustomTagView()
 {
     CGFloat _notSelectedMaxX;
     CGFloat _haveSelectedMaxX;
     
+    //根据haveSelected数组的末尾button的Y值是否改变来判断是否需要换行
     CGFloat _getLastButtonFirstY;
     CGFloat _getLastButtonSecondY;
     BOOL _isNotFirstReload;
@@ -168,35 +173,25 @@ typedef NS_ENUM(BOOL,TagButtontype){
     NSInteger buttonTagInt = 0;
     for (int i = 0; i< self.haveSelected.count; i++)
     {  //已经选择的标签
-        TagButton *button = [[TagButton alloc] initWithTitle:self.haveSelected[i] font:[UIFont systemFontOfSize:self.tagViewButtonFont] tagButtonType:Selected frame:CGRectMake(beginX, beginY, 0, self.tagViewButtonHeight)];
+        NSMutableArray *selectedKey = [NSMutableArray array];
+        NSMutableArray *selectedValue = [NSMutableArray array];
+        for (NSDictionary *dic in self.haveSelected) {
+            NSString *keyStr = [[dic allKeys] firstObject];
+            NSString *valueStr = [[dic allValues] firstObject];
+            [selectedValue addObject:valueStr];
+            [selectedKey addObject:keyStr];
+        }
+        TagButton *button = [[TagButton alloc] initWithTitle:selectedKey[i] font:[UIFont systemFontOfSize:self.tagViewButtonFont] tagButtonType:Selected frame:CGRectMake(beginX, beginY, 0, self.tagViewButtonHeight)];
         [button addTarget:self action:@selector(selectedButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         button.tag = SelectedButtonTag+i;
         
-        
-        //NSLog(@"haveSelected.count:%lu",(unsigned long)self.haveSelected.count);
-        //NSLog(@"selectedButtonBackArr.count:%lu",(unsigned long)self.selectedButtonBackArr.count);
-        
-        //NSInteger integer = self.haveSelected.count-self.selectedButtonBackArr.count-1;
-        //if (i > integer)
-            if (self.handAddTagIndexArr)
-            {
-                NSLog(@"...........%@",self.handAddTagIndexArr);
-                for (NSString *string in self.handAddTagIndexArr)
-                {
-                    NSInteger handAddIndex = [string integerValue];
-                    if (i != handAddIndex) {
-                        button.isOrNotExtraAddButton = YES;
-                        button.tagInt = buttonTagInt;
-                    }
-                }
-            }else
-            {
-                button.isOrNotExtraAddButton = YES;
-                button.tagInt = buttonTagInt;
-            }
+        //判断是从下面notSelected数组里添加的还是手动添加的
+        if ([selectedValue[i] isEqualToString:notSelected])
+        {
+            button.isOrNotExtraAddButton = YES;
+            button.tagInt = buttonTagInt;
             buttonTagInt ++;
-        
-        
+        }
         
         if (CGRectGetMaxX(button.frame) + TagButtonSpaceX > (rect.size.width - RightToView)) {
             beginX = LeftToView;
@@ -237,16 +232,23 @@ typedef NS_ENUM(BOOL,TagButtontype){
         }
         
         [self addSubview:button];
-
     }
     
-
+    
     
     beginX = LeftToView;
     beginY += self.tagViewButtonHeight + TagButtonSpaceBetweenSeletedAndNotSeleted;
     for (int i = 0; i< self.notSelected.count; i++)
     {  //没有选择的标签
-        TagButton *button = [[TagButton alloc] initWithTitle:self.notSelected[i] font:[UIFont systemFontOfSize:self.tagViewButtonFont] tagButtonType:NotSelected frame:CGRectMake(beginX, beginY, 0, self.tagViewButtonHeight)];
+        NSMutableArray *notSelectedKey = [NSMutableArray array];
+        NSMutableArray *notSelectedValue = [NSMutableArray array];
+        for (NSDictionary *dic in self.notSelected) {
+            NSString *keyStr = [[dic allKeys] firstObject];
+            NSString *valueStr = [[dic allValues] firstObject];
+            [notSelectedValue addObject:valueStr];
+            [notSelectedKey addObject:keyStr];
+        }
+        TagButton *button = [[TagButton alloc] initWithTitle:notSelectedKey[i] font:[UIFont systemFontOfSize:self.tagViewButtonFont] tagButtonType:NotSelected frame:CGRectMake(beginX, beginY, 0, self.tagViewButtonHeight)];
         button.tag = NotSelectedButtonTag + i;
         [button addTarget:self action:@selector(notSelectedButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -266,28 +268,29 @@ typedef NS_ENUM(BOOL,TagButtontype){
         {
             _notSelectedMaxX = beginX;
         }
-    
         
         //给未选中button里的选中的button加背景色
-        for (NSString *string in self.selectedButtonBackArr) {
+        for (NSString *string in self.selectedButtonBackArr)
+        {
             NSInteger index = [string integerValue];
             if (i == index) {
                 button.backgroundColor = [UIColor greenColor];
                 
                 //是否支持同一个标签重复点击添加
-                if (isOrNotRepeatAdd == 0) {
+                if (isOrNotRepeatAdd == 0)
+                {
                     button.enabled = NO;
                 }
             }
         }
         
-        
         [self addSubview:button];
     }
     
     
+    
     //block传值
-    self.block(self.haveSelected,self.selectedButtonBackArr,self.handAddTagIndexArr);
+    self.block(self.haveSelected,self.selectedButtonBackArr);
 }
 
 
@@ -298,17 +301,9 @@ typedef NS_ENUM(BOOL,TagButtontype){
     [self.haveSelected removeObjectAtIndex:index];
     _isNotFirstReload = YES;
     
-    
-//    if (self.handAddTagIndexArr)
-//    {
-//        self.handAddTagIndexArr = [self resetHandAddTagIndexeArrBySelectedTag:index];
-//    }
-    
-    
     if (button.isOrNotExtraAddButton)
     {
         NSInteger test = button.tagInt;
-        NSLog(@"*******selected******%@",[NSString stringWithFormat:@"%ld",(long)test]);
         [self.selectedButtonBackArr removeObjectAtIndex:test];
     }
     
@@ -321,14 +316,11 @@ typedef NS_ENUM(BOOL,TagButtontype){
     NSInteger index = button.tag - NotSelectedButtonTag;
     [self.haveSelected insertObject:self.notSelected[index] atIndex:self.haveSelected.count];
     [self.selectedButtonBackArr addObject:[NSString stringWithFormat:@"%ld",(long)index]];
-
     
-    NSLog(@"----notSelected----%@",[NSString stringWithFormat:@"%ld",(long)index]);
     //[self.notSelected removeObjectAtIndex:index];
     [self setNeedsDisplay];
     
-
-    //NSLog(@"_haveSelectedMaxX:%f",_haveSelectedMaxX);
+    
     //换行的时候发送通知
     if (_haveSelectedMaxX + TagButtonSpaceX + button.buttonW > (self.frame.size.width - RightToView))
     {
@@ -344,54 +336,6 @@ typedef NS_ENUM(BOOL,TagButtontype){
 
 
 
-
-
-- (NSArray *)resetHandAddTagIndexeArrBySelectedTag:(NSInteger)buttonTag
-{
-    NSMutableArray *mutArr = [NSMutableArray array];
-    
-    for (int i = 0; i < self.handAddTagIndexArr.count; i ++)
-    {
-        NSString *string = [self.handAddTagIndexArr objectAtIndex:i];
-        
-        if (buttonTag < [string integerValue])
-        {
-            if (i!=0)
-            {
-                NSRange range = NSMakeRange(0, i-1);
-                NSArray *arr = [self.handAddTagIndexArr subarrayWithRange:range];
-                [mutArr addObjectsFromArray:arr];
-            }
-            for (int j = i; j<self.handAddTagIndexArr.count; j++)
-            {
-                NSString *indexStr = [self.handAddTagIndexArr objectAtIndex:j];
-                NSInteger intNew = [indexStr integerValue]- 1;
-                NSString *strNew = [NSString stringWithFormat:@"%ld",(long)intNew];
-                [mutArr addObject:strNew];
-                 NSLog(@"...mutArr...%@",mutArr);
-            }
-        }
-        
-        if (buttonTag == [string integerValue])
-        {
-            if (i!=0)
-            {
-                NSRange range = NSMakeRange(0, i-1);
-                NSArray *arr = [self.handAddTagIndexArr subarrayWithRange:range];
-                [mutArr addObjectsFromArray:arr];
-            }
-            for (int j = i+1; j<self.handAddTagIndexArr.count; j++)
-            {
-                NSString *indexStr = [self.handAddTagIndexArr objectAtIndex:j];
-                NSInteger intNew = [indexStr integerValue]- 1;
-                NSString *strNew = [NSString stringWithFormat:@"%ld",(long)intNew];
-                [mutArr addObject:strNew];
-            }
-        }
-    }
-    
-    return mutArr;
-}
 
 
 @end
