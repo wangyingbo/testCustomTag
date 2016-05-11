@@ -87,7 +87,8 @@ typedef NS_ENUM(BOOL,TagButtontype){
 #define LeftToView      10 //距离左边的间距
 #define RightToView     10 //距离右边的间距
 #define TopToView       50 //距离顶部的间距
-#define TagButtonSpaceBetweenSeletedAndNotSeleted 50 //选中和未选中tag之间的间距
+#define TagButtonSpaceBetweenSeletedAndNotSeleted 80 //选中和未选中tag之间的间距
+#define cutViewH 15
 
 #define SelectedButtonTag    1000
 #define NotSelectedButtonTag 2000
@@ -170,6 +171,11 @@ extern NSString *handAdd;
     NSInteger beginX = LeftToView;
     NSInteger beginY = TopToView;
     
+    if (self.haveSelected) {
+        //添加“已增加标签”表头
+        [self addHaveAddHeader];
+    }
+    
     NSInteger buttonTagInt = 0;
     for (int i = 0; i< self.haveSelected.count; i++)
     {  //已经选择的标签
@@ -235,9 +241,12 @@ extern NSString *handAdd;
     }
     
     
-    
     beginX = LeftToView;
     beginY += self.tagViewButtonHeight + TagButtonSpaceBetweenSeletedAndNotSeleted;
+    
+    //添加"推荐标签"表头
+    [self addRecommendHeader:beginY];
+    
     for (int i = 0; i< self.notSelected.count; i++)
     {  //没有选择的标签
         NSMutableArray *notSelectedKey = [NSMutableArray array];
@@ -284,15 +293,55 @@ extern NSString *handAdd;
             }
         }
         
+        
         [self addSubview:button];
     }
-    
     
     
     //block传值
     self.block(self.haveSelected,self.selectedButtonBackArr);
 }
 
+
+/**
+ *  添加“已增加标签”表头
+ */
+- (void)addHaveAddHeader
+{
+    CGFloat haveAddLabelH = 20;
+    CGFloat haveAddLabelW = 100;
+    UILabel *haveAddLabel = [[UILabel alloc]initWithFrame:CGRectMake(LeftToView, cutViewH, haveAddLabelW, haveAddLabelH)];
+    haveAddLabel.text = @"已添加标签";
+    haveAddLabel.font = [UIFont systemFontOfSize:14.0];
+    haveAddLabel.textColor = [UIColor blackColor];
+    haveAddLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:haveAddLabel];
+}
+
+
+/**
+ *  添加"推荐标签"表头
+ */
+- (void)addRecommendHeader:(CGFloat)beginY
+{
+    //添加“推荐标签”
+    CGFloat recommendLabelH = 20;
+    CGFloat recommendLabelW = 100;
+    CGFloat recommendLabelX = LeftToView;
+    CGFloat recommendLabelY = beginY - recommendLabelH - cutViewH;
+    UILabel *recommendLabel = [[UILabel alloc]initWithFrame:CGRectMake(recommendLabelX, recommendLabelY, recommendLabelW, recommendLabelH)];
+    recommendLabel.text = @"推荐标签";
+    recommendLabel.font = [UIFont systemFontOfSize:14.0];
+    recommendLabel.textColor = [UIColor blackColor];
+    recommendLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:recommendLabel];
+    
+    //添加隔断的背景view
+    CGFloat cutViewY = recommendLabelY - cutViewH*2.0;
+    UIView *cutView = [[UIView alloc]initWithFrame:CGRectMake(0, cutViewY, [UIScreen mainScreen].bounds.size.width, cutViewH)];
+    cutView.backgroundColor = [UIColor colorWithRed:(236)/255.0 green:(236)/255.0 blue:(236)/255.0 alpha:1.0];
+    [self addSubview:cutView];
+}
 
 
 - (void)selectedButtonClicked:(TagButton *)button{

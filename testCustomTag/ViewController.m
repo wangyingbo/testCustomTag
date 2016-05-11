@@ -200,7 +200,7 @@ const NSString *handAdd = HANDADD;
     
     YBCustomTagView *view = [[YBCustomTagView alloc] initWithFrame:_tagViewFrame];
     view.backgroundColor = [UIColor whiteColor];
-    view.tagViewButtonFont = 15;
+    view.tagViewButtonFont = 14.0;
     view.tagViewButtonHeight = tagViewButtonH;
     view.haveSelected = [NSMutableArray arrayWithArray:_havedSelectedArr];
     view.notSelected = [NSMutableArray arrayWithArray:self.notSelectedArr];
