@@ -209,6 +209,10 @@ const NSString *handAdd = HANDADD;
         self.havedSelectedArr = haveSelected;
         self.selectedButtonBackArr = selectedBackArr;
     };
+    view.secondBlock = ^(CGFloat cellH){
+        _cellH = cellH;
+        NSLog(@".............%f",_cellH);
+    };
     
     [firstCell addSubview:view];
     self.tagView = view;

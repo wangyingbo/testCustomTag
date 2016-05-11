@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef void(^customTagBlock)(NSArray *haveSelected,NSArray *selectedBackArr);
+typedef void(^secondBlock)(CGFloat cellH);
 
 @interface YBCustomTagView : UIView
 /**
@@ -35,6 +36,9 @@ typedef void(^customTagBlock)(NSArray *haveSelected,NSArray *selectedBackArr);
  *  block
  */
 @property (nonatomic, copy) customTagBlock block;
-
+/**
+ *  secondBlock
+ */
+@property (nonatomic, copy) secondBlock secondBlock;
 
 @end

@@ -8,6 +8,8 @@
 
 #import "YBCustomTagView.h"
 #import "ImageTextButton.h"
+#import "D3View.h"
+
 
 #define MYCOLOR [UIColor colorWithRed:(36)/255.0 green:(183)/255.0 blue:(155)/255.0 alpha:1.0]
 #define allowLabelH 30
@@ -119,6 +121,7 @@ extern NSString *handAdd;
     CGFloat _getLastButtonFirstY;
     CGFloat _getLastButtonSecondY;
     BOOL _isNotFirstReload;
+    BOOL _isNotSecondBlockFirstReload;
 }
 
 
@@ -265,6 +268,7 @@ extern NSString *handAdd;
     //添加"推荐标签"表头
     [self addRecommendHeader:beginY];
     
+    CGFloat lastButtonY = 0;
     for (int i = 0; i< self.notSelected.count; i++)
     {  //没有选择的标签
         NSMutableArray *notSelectedKey = [NSMutableArray array];
@@ -294,6 +298,7 @@ extern NSString *handAdd;
         if (i == self.notSelected.count - 1)
         {
             _notSelectedMaxX = beginX;
+            lastButtonY = CGRectGetMaxY(button.frame);
         }
         
         //给未选中button里的选中的button加背景色
@@ -318,6 +323,11 @@ extern NSString *handAdd;
     
     //block传值
     self.block(self.haveSelected,self.selectedButtonBackArr);
+    if (!_isNotSecondBlockFirstReload) {
+        //只需要在第一次展示的时候算一下cellH高度，刷新VC
+        self.secondBlock(lastButtonY);
+        _isNotSecondBlockFirstReload = YES;//不是第一次了。
+    }
 }
 
 
@@ -362,42 +372,47 @@ extern NSString *handAdd;
 }
 
 
-- (void)selectedButtonClicked:(TagButton *)button{
-    NSInteger index = button.tag - SelectedButtonTag;
-    
-    //[self.notSelected addObject:self.haveSelected[index]];
-    [self.haveSelected removeObjectAtIndex:index];
-    _isNotFirstReload = YES;
-    
-    if (button.isOrNotExtraAddButton)
-    {
-        NSInteger test = button.tagInt;
-        [self.selectedButtonBackArr removeObjectAtIndex:test];
-    }
-    
-    [self setNeedsDisplay];
+- (void)selectedButtonClicked:(TagButton *)button
+{
+    [button d3_fadeOut:0.5 completion:^{
+        
+        NSInteger index = button.tag - SelectedButtonTag;
+        //[self.notSelected addObject:self.haveSelected[index]];
+        [self.haveSelected removeObjectAtIndex:index];
+        _isNotFirstReload = YES;//不是第一次刷新了
+        
+        if (button.isOrNotExtraAddButton)
+        {
+            NSInteger test = button.tagInt;
+            [self.selectedButtonBackArr removeObjectAtIndex:test];
+        }
+        [self setNeedsDisplay];
+    }];
     
 }
 
 
-- (void)notSelectedButtonClicked:(TagButton *)button{
-    NSInteger index = button.tag - NotSelectedButtonTag;
-    [self.haveSelected insertObject:self.notSelected[index] atIndex:self.haveSelected.count];
-    [self.selectedButtonBackArr addObject:[NSString stringWithFormat:@"%ld",(long)index]];
-    
-    //[self.notSelected removeObjectAtIndex:index];
-    [self setNeedsDisplay];
-    
-    
-    //换行的时候发送通知
-    if (_haveSelectedMaxX + TagButtonSpaceX + button.buttonW > (self.frame.size.width - RightToView))
-    {
-        NSDictionary *dict =[[NSDictionary alloc] initWithObjectsAndKeys:self.haveSelected,@"notSelected",self.selectedButtonBackArr,@"selectedButtonBackArr",nil];
-        //创建通知 第一步
-        NSNotification *notification =[NSNotification notificationWithName:@"notSelected" object:self userInfo:dict];
-        //通过通知中心发送通知 第二步
-        [[NSNotificationCenter defaultCenter] postNotification:notification];
-    }
+- (void)notSelectedButtonClicked:(TagButton *)button
+{
+    [button d3_shake:5.0 duration:0.5 completion:^{
+        
+        NSInteger index = button.tag - NotSelectedButtonTag;
+        [self.haveSelected insertObject:self.notSelected[index] atIndex:self.haveSelected.count];
+        [self.selectedButtonBackArr addObject:[NSString stringWithFormat:@"%ld",(long)index]];
+        
+        //[self.notSelected removeObjectAtIndex:index];
+        [self setNeedsDisplay];
+        
+        //换行的时候发送通知
+        if (_haveSelectedMaxX + TagButtonSpaceX + button.buttonW > (self.frame.size.width - RightToView))
+        {
+            NSDictionary *dict =[[NSDictionary alloc] initWithObjectsAndKeys:self.haveSelected,@"notSelected",self.selectedButtonBackArr,@"selectedButtonBackArr",nil];
+            //创建通知 第一步
+            NSNotification *notification =[NSNotification notificationWithName:@"notSelected" object:self userInfo:dict];
+            //通过通知中心发送通知 第二步
+            [[NSNotificationCenter defaultCenter] postNotification:notification];
+        }
+    }];
     
 }
 
