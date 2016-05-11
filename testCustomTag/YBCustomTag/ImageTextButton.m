@@ -36,6 +36,8 @@
     return self;
 }
 
+
+
 -(void)commonInit
 {
     //default Alignment is in order to facilitate the layout
@@ -43,14 +45,15 @@
     [self setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
     self.imgTextDistance = 10;
 }
-- (void)setButtonTitleWithImageAlignment:(UIButtonTitleWithImageAlignment)buttonTitleWithImageAlignment {
+- (void)setButtonTitleWithImageAlignment:(UIButtonTitleWithImageAlignment)buttonTitleWithImageAlignment
+{
     _buttonTitleWithImageAlignment = buttonTitleWithImageAlignment;
     [self alignmentValueChanged];
 }
 
-- (void)alignmentValueChanged {
-    
 
+- (void)alignmentValueChanged
+{
     CGFloat imgWidth = self.imageView.image.size.width;
     CGFloat imgHeight = self.imageView.image.size.height;
     CGSize textSize = [self.titleLabel.text sizeWithAttributes:@{NSFontAttributeName:self.titleLabel.font}];

@@ -10,6 +10,8 @@
 #import "ImageTextButton.h"
 
 #define MYCOLOR [UIColor colorWithRed:(36)/255.0 green:(183)/255.0 blue:(155)/255.0 alpha:1.0]
+#define allowLabelH 30
+#define labelSpaceW 50
 
 
 typedef NS_ENUM(BOOL,TagButtontype){
@@ -45,7 +47,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
         self.titleLabel.font = font;
         self.tagButtonType = tagButtonType;
         
-        frame.size.width = [self getLabelWidthWithText:title stringFont:font allowHeight:30] + 40;
+        frame.size.width = [self getLabelWidthWithText:title stringFont:font allowHeight:allowLabelH] + labelSpaceW;
         self.buttonW = frame.size.width;
         self.frame = frame;
         
@@ -86,6 +88,7 @@ typedef NS_ENUM(BOOL,TagButtontype){
     width = rect.size.width;
     return width;
 }
+
 @end
 
 
@@ -196,13 +199,15 @@ extern NSString *handAdd;
             [selectedValue addObject:valueStr];
             [selectedKey addObject:keyStr];
         }
+        
         TagButton *button = [[TagButton alloc] initWithTitle:selectedKey[i] font:[UIFont systemFontOfSize:self.tagViewButtonFont] tagButtonType:Selected frame:CGRectMake(beginX, beginY, 0, self.tagViewButtonHeight)];
         [button addTarget:self action:@selector(selectedButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         button.tag = SelectedButtonTag+i;
         
-        //把button的图片放在右边
-        [button setButtonTitleWithImageAlignment:UIButtonTitleWithImageAlignmentRight];
+        //设置button的图片放在右边---先设置图片，再调用方法
         [button setImage:[UIImage imageNamed:@"delegate_tag"] forState:UIControlStateNormal];
+        button.imgTextDistance = 15;
+        [button setButtonTitleWithImageAlignment:UIButtonTitleWithImageAlignmentLeft];
         
         //判断是从下面notSelected数组里添加的还是手动添加的
         if ([selectedValue[i] isEqualToString:notSelected])
