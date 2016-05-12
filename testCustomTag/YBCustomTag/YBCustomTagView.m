@@ -245,6 +245,7 @@ extern NSString *handAdd;
                 if (_getLastButtonSecondY == _getLastButtonFirstY)
                 {
                     //删除前和删除后Y值不变
+                    _isNotFirstReload = NO;
                 }else
                 {
                     //删除后Y值改变
@@ -254,6 +255,7 @@ extern NSString *handAdd;
                     //通过通知中心发送通知 第二步
                     [[NSNotificationCenter defaultCenter] postNotification:notification];
                     _getLastButtonFirstY = _getLastButtonSecondY;
+                    _isNotFirstReload = NO;
                 }
             }
         }
