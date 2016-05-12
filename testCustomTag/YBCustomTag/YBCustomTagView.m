@@ -376,8 +376,9 @@ extern NSString *handAdd;
 
 - (void)selectedButtonClicked:(TagButton *)button
 {
-    [button d3_fadeOut:0.5 completion:^{
-        
+    self.userInteractionEnabled = NO;//要不要同时删除多个
+    //坠落动画
+    [button d3_drop:0.2 completion:^{
         NSInteger index = button.tag - SelectedButtonTag;
         //[self.notSelected addObject:self.haveSelected[index]];
         [self.haveSelected removeObjectAtIndex:index];
@@ -389,6 +390,7 @@ extern NSString *handAdd;
             [self.selectedButtonBackArr removeObjectAtIndex:test];
         }
         [self setNeedsDisplay];
+        self.userInteractionEnabled = YES;//要不要同时删除多个
     }];
     
 }

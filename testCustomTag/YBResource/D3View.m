@@ -224,7 +224,7 @@
 }
 
 -(void)d3_moveX:(CGFloat)x duration:(NSTimeInterval)duration completion:(CompletionBlock)completion{
-    [self d3_setX:self.left + x duration:DEFAULT_DURATION completion:completion];
+    [self d3_setX:self.left + x duration:duration completion:completion];
 }
 
 

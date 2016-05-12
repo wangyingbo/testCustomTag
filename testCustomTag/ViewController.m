@@ -211,7 +211,7 @@ const NSString *handAdd = HANDADD;
     };
     view.secondBlock = ^(CGFloat cellH){
         _cellH = cellH;
-        NSLog(@".............%f",_cellH);
+        //NSLog(@".............%f",_cellH);
     };
     
     [firstCell addSubview:view];
